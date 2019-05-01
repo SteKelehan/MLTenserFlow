@@ -55,15 +55,15 @@ def neural_network_model(data):
     }
 
     l1 = tf.add(
-        tf.matmul(data, hidden_1_layer['weigthts'] + hidden_1_layer['biases']))
+        tf.matmul(data, hidden_1_layer['weigthts'], hidden_1_layer['biases']))
     l1 = tf.nn.relu(l1)
 
     l2 = tf.add(
-        tf.matmul(data, hidden_2_layer['weigthts'] + hidden_2_layer['biases']))
+        tf.matmul(data, hidden_2_layer['weigthts'], hidden_2_layer['biases']))
     l2 = tf.nn.relu(l2)
 
     l3 = tf.add(
-        tf.matmul(data, hidden_3_layer['weigthts'] + hidden_3_layer['biases']))
+        tf.matmul(data, hidden_3_layer['weigthts'], hidden_3_layer['biases']))
     l3 = tf.nn.relu(l3)
 
     output = tf.matmul(l3, output_layer['weights']) + output_layer['biases']
@@ -78,14 +78,17 @@ def train_neural_network(x):
 
     optimizer = tf.train.AdamOptimizer().minimize(cost)
 
+    # How many times to train (do full cycle)
+    hm_epochs = 10
+
     with tf.Session() as sess:
         sess.run(tf.initialize_all_variables())
 
-        for epoch in hm_epochs:
+        for epoch in range(hm_epochs):
             epoch_loss = 0
             for _ in range(int(mnist.train.num_examples / batch_size)):
-                x, y = mnist.train.next_batch(batch_size)
-                _, c = sess.run([optimizer, cost], feed_dict={x: x, y: y})
+                _x, _y = mnist.train.next_batch(batch_size)
+                _, c = sess.run([optimizer, cost], feed_dict={x: _x, y: _y})
                 epoch_loss += c
             print('Epoch', epoch, 'completed out of', hm_epochs, 'loss:',
                   epoch_loss)
